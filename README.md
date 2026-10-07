@@ -10,7 +10,7 @@ proteins with the most occurrences, and names the best one.
 | `proteins-generator.py` | Dataset generator supplied with the lab.|
 | `serial-proteins.py` | Serial version (parts 1–9 of the assignment). |
 | `mpi-proteins.py` | Distributed version using `mpi4py` (parts 10–12). |
-| `benchmark.py` | Times both over every process count and prints the comparison. Development tool, not delivered. |
+| `benchmark.py` | Times both over every process count and prints the comparison. |
 | `authors.txt` | One line per author. |
 
 ## Setup
@@ -60,7 +60,6 @@ python benchmark.py ABCD
 `benchmark.py` runs the serial version and then the MPI version on every
 process count up to the core limit, keeping the fastest of three runs each, and
 prints the elapsed time, speedup and parallel efficiency of every experiment.
-It writes nothing.
 
 ## Results
 

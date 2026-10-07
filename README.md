@@ -23,7 +23,7 @@ sudo pacman -S openmpi          # or: sudo apt install libopenmpi-dev openmpi-bi
 
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install --group dev --group lab
+python -m pip install --group dev
 pre-commit install
 ```
 

@@ -4,19 +4,20 @@
 # Install everything with:  python -m pip install --group dev
 
 [dependency-groups]
-dev = [
-    "pre-commit>=4.6",
-    "pyright>=1.1.414",
-    "ruff>=0.16.7",
-]
-
 # What the lab programs themselves import. `mpi4py` needs an MPI
 # implementation (MPICH or Open MPI) already present on the system: it builds
 # against the `mpicc` on your PATH.
-lab = [
+run = [
     "matplotlib>=3.9",
     "mpi4py>=4.0",
     "numpy>=2.0",
+]
+
+dev = [
+    { include-group = "run" },
+    "pre-commit>=4.6",
+    "pyright>=1.1.414",
+    "ruff>=0.16.7",
 ]
 
 # --------------------------------------------------------------------------- #

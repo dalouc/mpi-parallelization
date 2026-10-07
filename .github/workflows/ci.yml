@@ -31,7 +31,7 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       - name: Install dependencies
-        run: python -m pip install --group tools
+        run: python -m pip install --group lint
       - name: Ruff (lint)
         run: ruff check --output-format=github .
       - name: Ruff (format)
@@ -49,11 +49,12 @@ jobs:
           cache-dependency-path: pyproject.toml
       # Pyright is configured to look in `.venv`, the same place it looks
       # locally, and it needs the libraries the lab programs import -- the
-      # `dev` group pulls them in via the nested `run` group. `mpi4py` ships a
-      # manylinux wheel with MPICH bundled, so no system MPI is needed here.
+      # `typecheck` group pulls them in via the nested `run` group. `mpi4py`
+      # ships a manylinux wheel with MPICH bundled, so no system MPI is needed
+      # here.
       - name: Install dependencies
         run: |
           python -m venv .venv
-          .venv/bin/python -m pip install --group dev
+          .venv/bin/python -m pip install --group typecheck
       - name: Pyright
         run: .venv/bin/pyright

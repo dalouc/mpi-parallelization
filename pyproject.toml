@@ -13,18 +13,29 @@ run = [
     "numpy>=2.0",
 ]
 
-# Linters and formatters only -- no third-party imports needed. CI's lint job
-# installs just this group so it stays quick.
-tools = [
-    "pre-commit>=4.6",
-    "pyright>=1.1.414",
+# One group per CI job, so each job installs exactly what it runs and nothing
+# more. Keep them in sync with `.github/workflows/ci.yml`.
+
+# CI's `lint` job. Ruff needs no third-party imports, so this stays quick.
+lint = [
     "ruff>=0.16.7",
 ]
 
-# Everything needed for local development.
+# CI's `typecheck` job. Pyright needs the libraries the lab programs import in
+# order to resolve them, hence the nested `run` group.
+typecheck = [
+    { include-group = "run" },
+    "pyright>=1.1.414",
+]
+
+# Everything needed for local development. `pre-commit` lives here rather than
+# in a job group: it drives the other tools locally, while CI calls each tool
+# directly.
 dev = [
     { include-group = "run" },
-    { include-group = "tools" },
+    { include-group = "lint" },
+    { include-group = "typecheck" },
+    "pre-commit>=4.6",
 ]
 
 # --------------------------------------------------------------------------- #

@@ -13,11 +13,18 @@ run = [
     "numpy>=2.0",
 ]
 
-dev = [
-    { include-group = "run" },
+# Linters and formatters only -- no third-party imports needed. CI's lint job
+# installs just this group so it stays quick.
+tools = [
     "pre-commit>=4.6",
     "pyright>=1.1.414",
     "ruff>=0.16.7",
+]
+
+# Everything needed for local development.
+dev = [
+    { include-group = "run" },
+    { include-group = "tools" },
 ]
 
 # --------------------------------------------------------------------------- #

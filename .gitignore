@@ -1,0 +1,42 @@
+# Byte-compiled files and caches
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Tool caches
+.ruff_cache/
+.pytest_cache/
+
+# Coverage
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Packaging artefacts
+build/
+dist/
+*.egg-info/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+
+# Local secrets and overrides
+.env
+
+# Lab artefacts. The dataset is 670 MB and is regenerated on demand with
+# `proteins-generator.py`; everything else here is written by a run of one of
+# the programs and is reproducible from them.
+proteins.csv
+serial-time.txt
+benchmark.csv
+*.png
+
+# Course materials and the written report are deliberately kept out of the
+# repository.
+*.pdf

@@ -7,7 +7,7 @@ proteins with the most occurrences, and names the best one.
 
 | File | Role |
 | ---- | ---- |
-| `proteins-generator.py` | Dataset generator supplied with the lab. **Do not modify.** |
+| `proteins-generator.py` | Dataset generator supplied with the lab.|
 | `serial-proteins.py` | Serial version (parts 1–9 of the assignment). |
 | `mpi-proteins.py` | Distributed version using `mpi4py` (parts 10–12). |
 | `benchmark.py` | Drives both over every process count and plots the comparison. Development tool, not delivered. |
@@ -61,7 +61,7 @@ python benchmark.py ABCD                     # -> benchmark.csv + two charts
 `benchmark.py` runs the serial version and then the MPI version on every
 process count up to the core limit, keeping the fastest of three runs each. It
 writes `benchmark.csv` along with the time and speedup charts that the report
-is built from. The report itself is kept outside this repository.
+is built from.
 
 ## Results
 
@@ -94,18 +94,6 @@ straddling a boundary is read by the rank below it and skipped by the rank
 above — disjoint and complete with no communication. The dataset never travels
 through MPI: the only messages are one `bcast` of the pattern, one `gather` of
 ten triples per rank, and one `reduce` for the wall time.
-
-## Delivery
-
-The delivery is a single zip holding the report, the authors file and the two
-programs — the report PDF is not tracked here, so point the command at wherever
-you keep it:
-
-```bash
-zip <your-nia>_lab2_2026.zip \
-    authors.txt serial-proteins.py mpi-proteins.py
-zip <your-nia>_lab2_2026.zip -j path/to/lab2-report.pdf
-```
 
 ## Development commands
 

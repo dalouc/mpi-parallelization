@@ -13,8 +13,10 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
 
+  # Keep this `rev` and the pinned `ruff` in pyproject.toml's `lint` group on
+  # the same version, so the hook and CI never disagree.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.7
+    rev: v0.16.10
     hooks:
       - id: ruff-check
         args: [--fix]

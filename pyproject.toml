@@ -17,25 +17,36 @@ run = [
 # more. Keep them in sync with `.github/workflows/ci.yml`.
 
 # CI's `lint` job. Ruff needs no third-party imports, so this stays quick.
+# Pinned exactly, and to the same version as the `ruff-pre-commit` rev in
+# `.pre-commit-config.yaml`: a floating floor lets CI pick up a newer Ruff than
+# the commit hook runs, so a new release can fail CI on code that passed
+# locally. `pre-commit autoupdate` bumps the hook -- bump this line to match.
 lint = [
-    "ruff>=0.16.7",
+    "ruff==0.16.10",
 ]
 
 # CI's `typecheck` job. Pyright needs the libraries the lab programs import in
-# order to resolve them, hence the nested `run` group.
+# order to resolve them, hence the nested `run` group. No pin is needed to
+# match the hook: the Pyright hook is `language: system`, so it runs whatever
+# this group installed into `.venv`.
 typecheck = [
     { include-group = "run" },
     "pyright>=1.1.414",
 ]
 
-# Everything needed for local development. `pre-commit` lives here rather than
-# in a job group: it drives the other tools locally, while CI calls each tool
-# directly.
+# CI's `hygiene` job, which runs the `pre-commit-hooks` checks -- the ones no
+# other job covers. `pre-commit` also drives Ruff and Pyright locally, but CI
+# invokes those two directly in their own jobs.
+hygiene = [
+    "pre-commit>=4.6",
+]
+
+# Everything needed for local development: the union of the groups above.
 dev = [
     { include-group = "run" },
     { include-group = "lint" },
     { include-group = "typecheck" },
-    "pre-commit>=4.6",
+    { include-group = "hygiene" },
 ]
 
 # --------------------------------------------------------------------------- #

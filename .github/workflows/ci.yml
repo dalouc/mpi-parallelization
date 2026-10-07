@@ -48,12 +48,12 @@ jobs:
           cache: pip
           cache-dependency-path: pyproject.toml
       # Pyright is configured to look in `.venv`, the same place it looks
-      # locally, and it needs the libraries the lab programs import -- hence
-      # the `lab` group. `mpi4py` ships a manylinux wheel with MPICH bundled,
-      # so no system MPI has to be installed here.
+      # locally, and it needs the libraries the lab programs import -- the
+      # `dev` group pulls them in via the nested `run` group. `mpi4py` ships a
+      # manylinux wheel with MPICH bundled, so no system MPI is needed here.
       - name: Install dependencies
         run: |
           python -m venv .venv
-          .venv/bin/python -m pip install --group dev --group lab
+          .venv/bin/python -m pip install --group dev
       - name: Pyright
         run: .venv/bin/pyright

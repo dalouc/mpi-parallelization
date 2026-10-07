@@ -10,8 +10,8 @@ on rank 0 and merged into the global ranking.
 
 The dataset itself never travels through MPI: every rank memory-maps the file
 and scans its own range of it, so the only messages exchanged are the pattern
-and ten triples per rank. The speedup is reported against the time left in
-`serial-time.txt` by the serial version.
+and ten triples per rank. The program reports its own elapsed time; comparing
+it against the serial version is what `benchmark.py` is for.
 """
 
 from __future__ import annotations
@@ -26,9 +26,6 @@ import matplotlib.pyplot as plt
 from mpi4py import MPI
 
 DATASET = Path("proteins.csv")
-CHART = Path("mpi-matches.png")
-# Baseline written by `serial-proteins.py`; absent until it has been run once.
-TIMING = Path("serial-time.txt")
 
 # Proteins shown in the barchart and named in the ranking.
 TOP_N = 10
@@ -145,13 +142,12 @@ def search(pattern: bytes, rank: int, size: int) -> list[Match]:
         )
 
 
-def barchart(ranked: list[Match], pattern: str, path: Path) -> None:
-    """Plot the proteins in `ranked` as a barchart and save it to `path`.
+def barchart(ranked: list[Match], pattern: str) -> None:
+    """Plot the proteins in `ranked` as a barchart.
 
     Args:
         ranked: Matching proteins, best first, as merged on rank 0.
         pattern: The pattern that was searched for, shown in the title.
-        path: File the figure is written to, for inclusion in the report.
     """
     ids = [str(-protid) for _, _, protid in ranked]
     occurrences = [count for count, _, _ in ranked]
@@ -162,16 +158,14 @@ def barchart(ranked: list[Match], pattern: str, path: Path) -> None:
     plt.xlabel("protein id")
     plt.ylabel("occurrences")
     plt.tight_layout()
-    plt.savefig(path, dpi=150)
 
 
-def report(ranked: list[Match], pattern: str, chart: Path) -> None:
+def report(ranked: list[Match], pattern: str) -> None:
     """Print the ranking and the best protein, and build the barchart.
 
     Args:
         ranked: Matching proteins, best first, as merged on rank 0.
         pattern: The pattern that was searched for.
-        chart: File the barchart is written to.
     """
     if not ranked:
         print(f'No protein sequence contains "{pattern}".')
@@ -182,32 +176,12 @@ def report(ranked: list[Match], pattern: str, chart: Path) -> None:
     for count, hydrofob, protid in ranked:
         print(f"{-protid:>10} {count:>12} {hydrofob:>9}")
 
-    barchart(ranked, pattern, chart)
-    print(f"Barchart saved to {chart}")
+    barchart(ranked, pattern)
 
     count, hydrofob, protid = ranked[0]
     print(
         f"\nProtein with most occurrences: id {-protid} "
         f"with {count} occurrences (hydrofob {hydrofob})"
-    )
-
-
-def speedup(elapsed: float, size: int) -> None:
-    """Print the speedup of a run of `elapsed` seconds over `size` processes.
-
-    Args:
-        elapsed: Wall time of the parallel search, in seconds.
-        size: Number of MPI processes the search ran on.
-    """
-    try:
-        serial = float(TIMING.read_text())
-    except OSError, ValueError:
-        print(f"No baseline in {TIMING}: run serial-proteins.py for a speedup.")
-        return
-
-    print(
-        f"Serial time: {serial:.3f} s   Speedup: {serial / elapsed:.2f}x "
-        f"on {size} processes (efficiency {serial / elapsed / size:.0%})"
     )
 
 
@@ -247,8 +221,7 @@ def main() -> None:
     ranked = heapq.nlargest(TOP_N, chain.from_iterable(gathered))
 
     print(f"Elapsed time: {elapsed:.3f} s on {size} processes")
-    speedup(elapsed, size)
-    report(ranked, pattern, CHART)
+    report(ranked, pattern)
     plt.show()
 
 

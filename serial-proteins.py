@@ -9,8 +9,8 @@ ten proteins with the most matches and prints the single best one.
 
 The companion `mpi-proteins.py` splits exactly this search across MPI
 processes: it reuses `scan` unchanged and only hands it a different byte range
-per process. The elapsed time written to `serial-time.txt` is the baseline it
-reports its speedup against.
+per process. Pass the elapsed time printed here to it, and it reports its
+speedup over this version.
 """
 
 from __future__ import annotations
@@ -24,9 +24,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 DATASET = Path("proteins.csv")
-CHART = Path("serial-matches.png")
-# Baseline the MPI version reads back to report its speedup.
-TIMING = Path("serial-time.txt")
 
 # Proteins shown in the barchart and named in the ranking.
 TOP_N = 10
@@ -128,13 +125,12 @@ def search(pattern: bytes) -> list[Match]:
     return sorted(best, reverse=True)
 
 
-def barchart(ranked: list[Match], pattern: str, path: Path) -> None:
-    """Plot the proteins in `ranked` as a barchart and save it to `path`.
+def barchart(ranked: list[Match], pattern: str) -> None:
+    """Plot the proteins in `ranked` as a barchart.
 
     Args:
         ranked: Matching proteins, best first, as returned by `search`.
         pattern: The pattern that was searched for, shown in the title.
-        path: File the figure is written to, for inclusion in the report.
     """
     ids = [str(-protid) for _, _, protid in ranked]
     occurrences = [count for count, _, _ in ranked]
@@ -145,16 +141,14 @@ def barchart(ranked: list[Match], pattern: str, path: Path) -> None:
     plt.xlabel("protein id")
     plt.ylabel("occurrences")
     plt.tight_layout()
-    plt.savefig(path, dpi=150)
 
 
-def report(ranked: list[Match], pattern: str, chart: Path) -> None:
+def report(ranked: list[Match], pattern: str) -> None:
     """Print the ranking and the best protein, and build the barchart.
 
     Args:
         ranked: Matching proteins, best first, as returned by `search`.
         pattern: The pattern that was searched for.
-        chart: File the barchart is written to.
     """
     if not ranked:
         print(f'No protein sequence contains "{pattern}".')
@@ -165,8 +159,7 @@ def report(ranked: list[Match], pattern: str, chart: Path) -> None:
     for count, hydrofob, protid in ranked:
         print(f"{-protid:>10} {count:>12} {hydrofob:>9}")
 
-    barchart(ranked, pattern, chart)
-    print(f"Barchart saved to {chart}")
+    barchart(ranked, pattern)
 
     count, hydrofob, protid = ranked[0]
     print(
@@ -186,9 +179,8 @@ def main() -> None:
     elapsed = time.perf_counter() - begin
 
     print(f"Elapsed time: {elapsed:.3f} s")
-    TIMING.write_text(f"{elapsed:.6f}\n")
 
-    report(ranked, pattern, CHART)
+    report(ranked, pattern)
     plt.show()
 
 

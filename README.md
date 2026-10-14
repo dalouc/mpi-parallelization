@@ -100,3 +100,8 @@ ten triples per rank, and one `reduce` for the wall time.
 | Format | `ruff format .` |
 | Type-check | `pyright` |
 | Every hook | `pre-commit run --all-files` |
+
+---
+## Authors
+
+[Javier Patricio Luján Romero](https://github.com/javilujann), Elena Fernández Sedes, Miriam Alonso Cañete and [Daniel Lozano Uceda](https://github.com/dalouc)
